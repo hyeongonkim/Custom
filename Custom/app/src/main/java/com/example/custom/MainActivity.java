@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             }
         }
     }
+
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct){
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(),null);
         mAuth.signInWithCredential(credential)
@@ -79,7 +80,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         if(!task.isSuccessful()){
                             Toast.makeText(MainActivity.this, "인증 실패", Toast.LENGTH_SHORT).show();
                         }else{
-                            Toast.makeText(MainActivity.this, "구글 로그인 인증 성공", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "구글 로그인 성공", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(getApplicationContext(),
+                                    TraceActivity.class);
+                            startActivity(intent);
+                            finish();
                         }
                     }
                 });

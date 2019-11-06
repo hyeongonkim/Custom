@@ -20,14 +20,20 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     SignInButton Google_Login;
 
     private static final int RC_SIGN_IN = 1000;
     private FirebaseAuth mAuth;
+    private FirebaseUser currentUser;
     private GoogleApiClient mGoogleApiClient;
+
+    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +62,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        // Check if user is signed in (non-null) and update UI accordingly.
+        currentUser = mAuth.getCurrentUser();
+        if(currentUser != null){
+            Toast.makeText(MainActivity.this, "자동 로그인 성공", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(MainActivity.this, TraceActivity.class));
+            finish();
+        }
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
@@ -80,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         if(!task.isSuccessful()){
                             Toast.makeText(MainActivity.this, "인증 실패", Toast.LENGTH_SHORT).show();
                         }else{
-                            Toast.makeText(MainActivity.this, "구글 로그인 성공", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "로그인 성공", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getApplicationContext(),
                                     TraceActivity.class);
                             startActivity(intent);

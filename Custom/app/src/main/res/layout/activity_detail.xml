@@ -6,24 +6,26 @@
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/detail_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:text="삼성TV"
-        android:textColor="#5cb8f3"
-        android:paddingBottom="14dp"
         android:paddingTop="54dp"
-        android:textStyle="bold"
-        android:textSize="27sp" />
+        android:paddingBottom="14dp"
+        android:text="상품명"
+        android:textAlignment="center"
+        android:textColor="#5cb8f3"
+        android:textSize="27sp"
+        android:textStyle="bold" />
 
 
     <TextView
+        android:id="@+id/detail_number"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="11dp"
+        android:text="송장번호"
         android:textAlignment="center"
-        android:text ="RX422936562CN"
-        android:textSize="15sp"
-        android:paddingBottom="11dp" />
+        android:textSize="15sp" />
 
 
     <ImageView
@@ -37,15 +39,17 @@
 
 
     <TextView
+        android:id="@+id/detail_status"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="하기신고수리"
+        android:paddingBottom="22dp"
+        android:text="현재상태"
         android:textAlignment="center"
         android:textColor="#000000"
-        android:textSize="16sp"
-        android:paddingBottom="22dp" />
+        android:textSize="16sp" />
 
     <Button
+        android:id="@+id/trace_local"
         android:layout_width="101dp"
         android:layout_height="30dp"
         android:layout_centerHorizontal="true"
@@ -63,8 +67,9 @@
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:divider="#000000"
-        android:dividerHeight="0dp" ></ListView>
+        android:divider="#B0B0B0"
+        android:dividerHeight="1dp"
+        android:headerDividersEnabled="true"></ListView>
 
 
 </LinearLayout>

@@ -3,8 +3,10 @@ package com.example.custom;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,12 +21,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 public class DetailActivity extends AppCompatActivity {
     private Intent intent;
 
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
+
+    private ListView listView;
+    ArrayList<CustomListItemClass> customList;
+    CustomListAdapter adapter;
 
     TextView detail_name, detail_number, detail_status;
 
@@ -57,6 +65,30 @@ public class DetailActivity extends AppCompatActivity {
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
 
+                    }
+                });
+
+        listView = (ListView) findViewById(R.id.customStatusList);
+        mDatabase.child("users").child(cu).child(item).child("customStatus").addValueEventListener(
+                new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        customList = new ArrayList<>();
+                        for (DataSnapshot fileSnapshot : dataSnapshot.getChildren()) {
+                            CustomListItemClass temp = new CustomListItemClass();
+                            temp.statusLocation = fileSnapshot.child("statusLocation").getValue(String.class);
+                            temp.statusMessage = fileSnapshot.child("statusMessage").getValue(String.class);
+                            temp.statusTime = fileSnapshot.child("statusTime").getValue(String.class);
+                            customList.add(0, temp);
+                        }
+                        adapter = new CustomListAdapter(customList);
+                        adapter.notifyDataSetChanged();
+                        listView.setAdapter(adapter);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.w("TAG: ", "Failed to read value", databaseError.toException());
                     }
                 });
     }

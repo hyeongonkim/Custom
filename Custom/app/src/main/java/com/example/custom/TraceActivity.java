@@ -50,7 +50,7 @@ public class TraceActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.tracelist);
         empty_img = (ImageView) findViewById(R.id.empty_img);
 
-        mDatabase.child("users").child(cu).addValueEventListener(new ValueEventListener() {
+        mDatabase.child("users").child(cu).orderByChild("nowTime").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 traceList = new ArrayList<>();
@@ -60,7 +60,7 @@ public class TraceActivity extends AppCompatActivity {
                     temp.trace_company = fileSnapshot.child("traceCompany").getValue(String.class);
                     temp.trace_number = fileSnapshot.child("traceNumber").getValue(String.class);
                     temp.now_status = fileSnapshot.child("nowStatus").getValue(String.class);
-                    traceList.add(temp);
+                    traceList.add(0, temp);
                 }
                 if(!traceList.isEmpty()) {
                     empty_img.setVisibility(View.INVISIBLE);

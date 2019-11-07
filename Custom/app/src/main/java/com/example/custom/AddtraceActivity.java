@@ -15,8 +15,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 public class AddtraceActivity extends AppCompatActivity {
     private EditText product_name_input;
@@ -93,7 +95,8 @@ public class AddtraceActivity extends AppCompatActivity {
                 String t_number = trace_number_input.getText().toString();
                 String t_year = trace_year.getSelectedItem().toString();
                 String t_company = trace_company.getSelectedItem().toString();
-                AddTraceClass forSave = new AddTraceClass(p_name, t_number, t_year, t_company);
+                Map n_time = ServerValue.TIMESTAMP;
+                AddTraceClass forSave = new AddTraceClass(p_name, t_number, t_year, t_company, n_time);
 
                 mAuth = FirebaseAuth.getInstance();
                 currentUser = mAuth.getCurrentUser();

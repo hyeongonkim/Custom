@@ -2,12 +2,16 @@ package com.example.custom;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -134,9 +138,24 @@ public class TraceActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_setting:
+                final String PREFERENCE = "com.studio572.samplesharepreference";
+                final SharedPreferences pref = getSharedPreferences(PREFERENCE, MODE_PRIVATE);
+
+                final EditText edittext = new EditText(this);
+
+                FrameLayout container = new FrameLayout(this);
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.leftMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+                params.rightMargin = getResources().getDimensionPixelSize(R.dimen.dialog_margin);
+
+                edittext.setLayoutParams(params);
+
+                container.addView(edittext);
+                edittext.setText(pref.getString("personalCode", ""));
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-                builder.setTitle("설정").setMessage("공사중...");
+                builder.setTitle("설정").setMessage("개인통관고유부호를 메모하실 수 있습니다").setView(container);
 
                 builder.setPositiveButton("닫기", new DialogInterface.OnClickListener(){
                     @Override
@@ -145,7 +164,17 @@ public class TraceActivity extends AppCompatActivity {
                     }
                 });
 
-                builder.setNegativeButton("로그아웃", new DialogInterface.OnClickListener(){
+                builder.setNegativeButton("저장", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int id)
+                    {
+                        SharedPreferences.Editor editor = pref.edit();
+                        editor.putString("personalCode", edittext.getText().toString());
+                        editor.commit();
+                    }
+                });
+
+                builder.setNeutralButton("로그아웃", new DialogInterface.OnClickListener(){
                     @Override
                     public void onClick(DialogInterface dialog, int id)
                     {

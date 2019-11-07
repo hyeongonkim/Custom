@@ -20,6 +20,7 @@
         <activity android:name=".TraceActivity" />
         <activity android:name=".DetailActivity" />
         <activity android:name=".AddtraceActivity" />
+        <activity android:name=".FixtraceActivity" />
     </application>
 
 </manifest>

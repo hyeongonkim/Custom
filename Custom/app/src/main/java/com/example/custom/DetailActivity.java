@@ -10,7 +10,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,7 +36,13 @@ public class DetailActivity extends AppCompatActivity {
     ArrayList<CustomListItemClass> customList;
     CustomListAdapter adapter;
 
+    String item;
+
     TextView detail_name, detail_number, detail_status;
+
+    protected String getItem() {
+        return item;
+    }
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,8 +59,8 @@ public class DetailActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
         String cu = currentUser.getUid();
-        String item = intent.getStringExtra("toDetail");
-        mDatabase.child("users").child(cu).child(item).addListenerForSingleValueEvent(
+        item = intent.getStringExtra("toDetail");
+        mDatabase.child("users").child(cu).child(item).addValueEventListener(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -128,7 +133,10 @@ public class DetailActivity extends AppCompatActivity {
                 alertDialog.show();
                 return true;
             case R.id.action_fix:
-                Toast.makeText(this, "수정팝업", Toast.LENGTH_SHORT).show();
+                intent = new Intent(getApplicationContext(), FixtraceActivity.class);
+                intent.putExtra("toFix", getItem());
+                startActivity(intent);
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

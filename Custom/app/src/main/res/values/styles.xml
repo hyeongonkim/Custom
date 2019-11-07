@@ -16,4 +16,6 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="dialog_margin">25dp</style>
+
 </resources>

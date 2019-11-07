@@ -64,18 +64,34 @@
         android:layout_height="50dp"
         android:text=" " />
 
-    <TextView
-        android:id="@+id/top_divider"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#B0B0B0"/>
+        android:layout_height="match_parent">
 
-    <ListView
-        android:id="@+id/customStatusList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="#B0B0B0"
-        android:dividerHeight="1dp" ></ListView>
+        <ImageView
+            android:id="@+id/empty_img"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/detail_empty" />
+
+        <TextView
+            android:id="@+id/top_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#B0B0B0"/>
+
+        <ListView
+            android:id="@+id/customStatusList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="#B0B0B0"
+            android:dividerHeight="1dp" >
+        </ListView>
+
+    </FrameLayout>
+
+
 
 
 </LinearLayout>

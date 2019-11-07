@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 public class TraceActivity extends AppCompatActivity {
 
     private ListView listView;
+    private ImageView empty_img;
     ArrayList<TraceListItemClass> traceList;
     ListAdapter adapter;
 
@@ -46,6 +48,7 @@ public class TraceActivity extends AppCompatActivity {
         final String cu = currentUser.getUid();
 
         listView = (ListView) findViewById(R.id.tracelist);
+        empty_img = (ImageView) findViewById(R.id.empty_img);
 
         mDatabase.child("users").child(cu).addValueEventListener(new ValueEventListener() {
             @Override
@@ -58,6 +61,11 @@ public class TraceActivity extends AppCompatActivity {
                     temp.trace_number = fileSnapshot.child("traceNumber").getValue(String.class);
                     temp.now_status = fileSnapshot.child("nowStatus").getValue(String.class);
                     traceList.add(temp);
+                }
+                if(!traceList.isEmpty()) {
+                    empty_img.setVisibility(View.INVISIBLE);
+                } else {
+                    empty_img.setVisibility(View.VISIBLE);
                 }
                 adapter = new ListAdapter(traceList);
                 adapter.notifyDataSetChanged();
@@ -83,15 +91,34 @@ public class TraceActivity extends AppCompatActivity {
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                String toDelete = traceList.get(position).product_name;
-                mDatabase.child("users").child(cu).child(toDelete).removeValue().addOnSuccessListener(
-                        new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Toast.makeText(getApplicationContext(), "삭제되었습니다", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                );
+                final String toDelete = traceList.get(position).product_name;
+                AlertDialog.Builder builder = new AlertDialog.Builder(TraceActivity.this);
+
+                builder.setTitle("삭제").setMessage(toDelete + "을(를) 정말 지우시겠습니까?");
+
+                builder.setPositiveButton("닫기", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int id)
+                    {
+                    }
+                });
+
+                builder.setNegativeButton("삭제", new DialogInterface.OnClickListener(){
+                    @Override
+                    public void onClick(DialogInterface dialog, int id)
+                    {
+                        mDatabase.child("users").child(cu).child(toDelete).removeValue().addOnSuccessListener(
+                                new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        Toast.makeText(getApplicationContext(), "삭제되었습니다", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                        );
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
                 return true;
             }
         });

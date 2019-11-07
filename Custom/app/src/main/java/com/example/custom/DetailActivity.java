@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +33,7 @@ public class DetailActivity extends AppCompatActivity {
     private FirebaseUser currentUser;
 
     private ListView listView;
+    private ImageView empty_img;
     ArrayList<CustomListItemClass> customList;
     CustomListAdapter adapter;
 
@@ -44,6 +47,8 @@ public class DetailActivity extends AppCompatActivity {
         detail_name = (TextView) findViewById(R.id.detail_name);
         detail_number = (TextView) findViewById(R.id.detail_number);
         detail_status = (TextView) findViewById(R.id.detail_status);
+
+        empty_img = (ImageView) findViewById(R.id.empty_img);
 
         intent = getIntent();
         mAuth = FirebaseAuth.getInstance();
@@ -78,8 +83,14 @@ public class DetailActivity extends AppCompatActivity {
                             CustomListItemClass temp = new CustomListItemClass();
                             temp.statusLocation = fileSnapshot.child("statusLocation").getValue(String.class);
                             temp.statusMessage = fileSnapshot.child("statusMessage").getValue(String.class);
-                            temp.statusTime = fileSnapshot.child("statusTime").getValue(String.class);
+                            String rawTime = fileSnapshot.child("statusTime").getValue(String.class);
+                            temp.statusTime = rawTime.substring(0,4) + "." + rawTime.substring(4,6) + "." + rawTime.substring(6,8) + " " + rawTime.substring(8,10) + ":" + rawTime.substring(10,12) + ":" + rawTime.substring(12,14);
                             customList.add(0, temp);
+                        }
+                        if(!customList.isEmpty()) {
+                            empty_img.setVisibility(View.INVISIBLE);
+                        } else {
+                            empty_img.setVisibility(View.VISIBLE);
                         }
                         adapter = new CustomListAdapter(customList);
                         adapter.notifyDataSetChanged();

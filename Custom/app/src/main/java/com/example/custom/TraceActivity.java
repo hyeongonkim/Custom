@@ -35,6 +35,7 @@ public class TraceActivity extends AppCompatActivity {
 
     private ListView listView;
     private ImageView empty_img;
+    private ImageView loading_img;
     ArrayList<TraceListItemClass> traceList;
     ListAdapter adapter;
 
@@ -53,10 +54,13 @@ public class TraceActivity extends AppCompatActivity {
 
         listView = (ListView) findViewById(R.id.tracelist);
         empty_img = (ImageView) findViewById(R.id.empty_img);
+        loading_img = (ImageView) findViewById(R.id.loading_img);
+        loading_img.setVisibility(View.VISIBLE);
 
         mDatabase.child("users").child(cu).orderByChild("nowTime").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                loading_img.setVisibility(View.INVISIBLE);
                 traceList = new ArrayList<>();
                 for (DataSnapshot fileSnapshot : dataSnapshot.getChildren()) {
                     TraceListItemClass temp = new TraceListItemClass();
@@ -79,6 +83,7 @@ public class TraceActivity extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.w("TAG: ", "Failed to read value", databaseError.toException());
+                loading_img.setVisibility(View.VISIBLE);
             }
         });
 

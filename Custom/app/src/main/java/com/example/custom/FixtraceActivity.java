@@ -2,6 +2,8 @@ package com.example.custom;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,6 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class FixtraceActivity extends AppCompatActivity {
     private Intent intent;
@@ -62,8 +65,6 @@ public class FixtraceActivity extends AppCompatActivity {
         arrayList = new ArrayList<>();
         arrayList.add("2019");
         arrayList.add("2018");
-        arrayList.add("2017");
-        arrayList.add("2016");
 
         arrayAdapter = new ArrayAdapter<>(getApplicationContext(),
                 android.R.layout.simple_spinner_dropdown_item,
@@ -82,10 +83,17 @@ public class FixtraceActivity extends AppCompatActivity {
 
 
         companyList = new ArrayList<>();
-        companyList.add("EMS");
+        companyList.add("우체국");
         companyList.add("대한통운");
         companyList.add("한진택배");
+        companyList.add("EMS");
         companyList.add("DHL");
+        companyList.add("FedEx");
+        companyList.add("UPS");
+        companyList.add("로젠택배");
+        companyList.add("천일택배");
+        companyList.add("경동택배");
+        companyList.add("대신택배");
 
         companyAdapter = new ArrayAdapter<>(getApplicationContext(),
                 android.R.layout.simple_spinner_dropdown_item,
@@ -101,6 +109,61 @@ public class FixtraceActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
+
+        final Pattern ps = Pattern.compile("^[A-Z]{2}+[0-9]{9}+[A-Z]{2}+$");
+
+        trace_number_input.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(ps.matcher(trace_number_input.getText().toString()).matches()) {
+                    companyList.clear();
+                    companyList.add("EMS");
+                } else if(trace_number_input.getText().toString().length() == 10) {
+                    companyList.clear();
+                    companyList.add("대한통운");
+                    companyList.add("한진택배");
+                    companyList.add("DHL");
+                    companyList.add("경동택배");
+                } else if(trace_number_input.getText().toString().length() == 11) {
+                    companyList.clear();
+                    companyList.add("로젠택배");
+                    companyList.add("천일택배");
+                    companyList.add("경동택배");
+                } else if(trace_number_input.getText().toString().length() == 12) {
+                    companyList.clear();
+                    companyList.add("한진택배");
+                    companyList.add("FedEx");
+                } else if(trace_number_input.getText().toString().length() == 13) {
+                    companyList.clear();
+                    companyList.add("우체국");
+                    companyList.add("대신택배");
+                } else {
+                    companyList.clear();
+                    companyList.add("우체국");
+                    companyList.add("대한통운");
+                    companyList.add("한진택배");
+                    companyList.add("EMS");
+                    companyList.add("DHL");
+                    companyList.add("FedEx");
+                    companyList.add("UPS");
+                    companyList.add("로젠택배");
+                    companyList.add("천일택배");
+                    companyList.add("경동택배");
+                    companyList.add("대신택배");
+                }
+                trace_company.setAdapter(companyAdapter);
+                trace_company.setSelection(0);
+            }
+
+            @Override
+            public void afterTextChanged(Editable arg0) {
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+        });
+
         mDatabase.child("users").child(cu).child(item).addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override

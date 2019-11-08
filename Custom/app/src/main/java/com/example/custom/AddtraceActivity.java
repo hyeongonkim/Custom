@@ -1,6 +1,10 @@
 package com.example.custom;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -19,6 +23,7 @@ import com.google.firebase.database.ServerValue;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class AddtraceActivity extends AppCompatActivity {
     private EditText product_name_input;
@@ -44,13 +49,12 @@ public class AddtraceActivity extends AppCompatActivity {
 
         product_name_input = (EditText) findViewById(R.id.product_name_input);
         trace_number_input = (EditText) findViewById(R.id.trace_number_input);
+        trace_number_input.setFilters(new InputFilter[]{filterTrace});
         save_btn = (Button) findViewById(R.id.save);
 
         arrayList = new ArrayList<>();
         arrayList.add("2019");
         arrayList.add("2018");
-        arrayList.add("2017");
-        arrayList.add("2016");
 
         arrayAdapter = new ArrayAdapter<>(getApplicationContext(),
                 android.R.layout.simple_spinner_dropdown_item,
@@ -67,12 +71,18 @@ public class AddtraceActivity extends AppCompatActivity {
             }
         });
 
-
         companyList = new ArrayList<>();
-        companyList.add("EMS");
+        companyList.add("우체국");
         companyList.add("대한통운");
         companyList.add("한진택배");
+        companyList.add("EMS");
         companyList.add("DHL");
+        companyList.add("FedEx");
+        companyList.add("UPS");
+        companyList.add("로젠택배");
+        companyList.add("천일택배");
+        companyList.add("경동택배");
+        companyList.add("대신택배");
 
         companyAdapter = new ArrayAdapter<>(getApplicationContext(),
                 android.R.layout.simple_spinner_dropdown_item,
@@ -88,6 +98,60 @@ public class AddtraceActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> adapterView) {
             }
         });
+
+        final Pattern ps = Pattern.compile("^[A-Z]{2}+[0-9]{9}+[A-Z]{2}+$");
+
+        trace_number_input.addTextChangedListener(new TextWatcher() {
+                                    @Override
+                                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                                        if(ps.matcher(trace_number_input.getText().toString()).matches()) {
+                                            companyList.clear();
+                                            companyList.add("EMS");
+                                        } else if(trace_number_input.getText().toString().length() == 10) {
+                                            companyList.clear();
+                                            companyList.add("대한통운");
+                                            companyList.add("한진택배");
+                                            companyList.add("DHL");
+                                            companyList.add("경동택배");
+                                        } else if(trace_number_input.getText().toString().length() == 11) {
+                                            companyList.clear();
+                                            companyList.add("로젠택배");
+                                            companyList.add("천일택배");
+                                            companyList.add("경동택배");
+                                        } else if(trace_number_input.getText().toString().length() == 12) {
+                                            companyList.clear();
+                                            companyList.add("한진택배");
+                                            companyList.add("FedEx");
+                                        } else if(trace_number_input.getText().toString().length() == 13) {
+                                            companyList.clear();
+                                            companyList.add("우체국");
+                                            companyList.add("대신택배");
+                                        } else {
+                                            companyList.clear();
+                                            companyList.add("우체국");
+                                            companyList.add("대한통운");
+                                            companyList.add("한진택배");
+                                            companyList.add("EMS");
+                                            companyList.add("DHL");
+                                            companyList.add("FedEx");
+                                            companyList.add("UPS");
+                                            companyList.add("로젠택배");
+                                            companyList.add("천일택배");
+                                            companyList.add("경동택배");
+                                            companyList.add("대신택배");
+                                        }
+                                        trace_company.setAdapter(companyAdapter);
+                                        trace_company.setSelection(0);
+                                    }
+
+                                    @Override
+                                    public void afterTextChanged(Editable arg0) {
+                                    }
+
+                                    @Override
+                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                                    }
+                                });
 
         save_btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -108,4 +172,15 @@ public class AddtraceActivity extends AppCompatActivity {
             }
         });
     }
+
+    protected InputFilter filterTrace = new InputFilter() {
+        @Override
+        public CharSequence filter(CharSequence charSequence, int i, int i1, Spanned spanned, int i2, int i3) {
+            Pattern ps = Pattern.compile("^[A-Z0-9]+$");
+            if(!ps.matcher(charSequence).matches()) {
+                return"";
+            }
+            return null;
+        }
+    };
 }

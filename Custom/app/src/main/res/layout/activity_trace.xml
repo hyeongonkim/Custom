@@ -13,7 +13,15 @@
             android:layout_width="171dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:visibility="invisible"
             app:srcCompat="@drawable/trace_empty" />
+
+        <ImageView
+            android:id="@+id/loading_img"
+            android:layout_width="171dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            app:srcCompat="@drawable/trace_loading" />
 
         <ListView
             android:id="@+id/tracelist"
@@ -22,6 +30,8 @@
             android:layout_height="match_parent"
             android:divider="#B0B0B0"
             android:dividerHeight="1dp" >
+
+
         </ListView>
     </FrameLayout>
 

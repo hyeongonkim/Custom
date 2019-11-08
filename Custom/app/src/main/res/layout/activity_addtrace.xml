@@ -41,10 +41,10 @@
         android:id="@+id/trace_number_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
         android:layout_marginLeft="58dp"
         android:layout_marginRight="58dp"
-        android:hint="송장번호를 입력하세요" />
+        android:ems="10"
+        android:hint="영문대문자, 숫자만 입력 가능" />
 
     <TextView
         android:id="@+id/trace_year"

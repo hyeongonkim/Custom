@@ -28,7 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     SignInButton Google_Login;
 
-    private static final int RC_SIGN_IN = 1000;
+    private static final int RC_SIGN_IN = 1024;
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private GoogleApiClient mGoogleApiClient;

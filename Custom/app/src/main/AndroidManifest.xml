@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.custom">
+
     <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -9,7 +11,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"
+
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/noTitleAppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,10 +22,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".TraceActivity" />
-        <activity android:name=".DetailActivity" />
-        <activity android:name=".AddtraceActivity" />
-        <activity android:name=".FixtraceActivity" />
+        <activity
+            android:name=".TraceActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".DetailActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AddtraceActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".FixtraceActivity"
+            android:screenOrientation="portrait" />
+
     </application>
 
 </manifest>

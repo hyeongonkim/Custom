@@ -89,7 +89,6 @@ public class FixtraceActivity extends AppCompatActivity {
         companyList.add("EMS");
         companyList.add("DHL");
         companyList.add("FedEx");
-        companyList.add("UPS");
         companyList.add("로젠택배");
         companyList.add("천일택배");
         companyList.add("경동택배");
@@ -145,7 +144,6 @@ public class FixtraceActivity extends AppCompatActivity {
                     companyList.add("EMS");
                     companyList.add("DHL");
                     companyList.add("FedEx");
-                    companyList.add("UPS");
                     companyList.add("로젠택배");
                     companyList.add("천일택배");
                     companyList.add("경동택배");

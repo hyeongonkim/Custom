@@ -9,7 +9,7 @@
         android:id="@+id/detail_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="54dp"
+        android:paddingTop="35dp"
         android:paddingBottom="14dp"
         android:text="상품명"
         android:textAlignment="center"
@@ -59,37 +59,70 @@
         android:textColor="#ffffff" />
 
     <TextView
-        android:id="@+id/empty_space"
+        android:id="@+id/empty_space1"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="5dp"
         android:text=" " />
 
-    <FrameLayout
+    <Button
+        android:id="@+id/trace_finish"
+        android:layout_width="101dp"
+        android:layout_height="30dp"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:background="#5cb8f3"
+        android:text="배달완료처리"
+        android:textColor="#ffffff" />
+
+    <TextView
+        android:id="@+id/empty_space2"
+        android:layout_width="match_parent"
+        android:layout_height="35dp"
+        android:text=" " />
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/empty_img"
-            android:layout_width="220dp"
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adView"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            app:srcCompat="@drawable/detail_empty" />
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            app:adSize="BANNER"
+            app:adUnitId="ca-app-pub-5366317787089139/2596513996"></com.google.android.gms.ads.AdView>
 
-        <TextView
-            android:id="@+id/top_divider"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#B0B0B0"/>
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@+id/adView">
 
-        <ListView
-            android:id="@+id/customStatusList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:divider="#B0B0B0"
-            android:dividerHeight="1dp" >
-        </ListView>
+            <ImageView
+                android:id="@+id/empty_img"
+                android:layout_width="220dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/detail_empty" />
 
-    </FrameLayout>
+            <TextView
+                android:id="@+id/top_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#B0B0B0"/>
+
+            <ListView
+                android:id="@+id/customStatusList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="#B0B0B0"
+                android:dividerHeight="1dp" >
+            </ListView>
+
+        </FrameLayout>
+
+
+    </RelativeLayout>
 
 
 

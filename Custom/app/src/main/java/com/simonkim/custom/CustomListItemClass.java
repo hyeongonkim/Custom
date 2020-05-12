@@ -1,4 +1,4 @@
-package com.example.custom;
+package com.simonkim.custom;
 
 public class CustomListItemClass {
     public String statusMessage;

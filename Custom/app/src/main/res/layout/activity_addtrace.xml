@@ -23,6 +23,8 @@
         android:ems="10"
         android:layout_marginLeft="58dp"
         android:layout_marginRight="58dp"
+        android:singleLine = "true"
+        android:lines = "1"
         android:hint="상품명을 입력하세요" />
 
     <TextView
@@ -44,6 +46,8 @@
         android:layout_marginLeft="58dp"
         android:layout_marginRight="58dp"
         android:ems="10"
+        android:singleLine = "true"
+        android:lines = "1"
         android:hint="영문대문자, 숫자만 입력 가능" />
 
     <TextView

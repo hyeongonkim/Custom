@@ -4,35 +4,51 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <FrameLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/empty_img"
-            android:layout_width="171dp"
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adView"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="invisible"
-            app:srcCompat="@drawable/trace_empty" />
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            app:adSize="BANNER"
+            app:adUnitId="ca-app-pub-5366317787089139/2596513996"></com.google.android.gms.ads.AdView>
 
-        <ImageView
-            android:id="@+id/loading_img"
-            android:layout_width="171dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            app:srcCompat="@drawable/trace_loading" />
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@+id/adView">
 
-        <ListView
-            android:id="@+id/tracelist"
-            style="@style/Widget.AppCompat.ListView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:divider="#B0B0B0"
-            android:dividerHeight="1dp" >
+            <ImageView
+                android:id="@+id/empty_img"
+                android:layout_width="171dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="invisible"
+                app:srcCompat="@drawable/trace_empty" />
+
+            <ImageView
+                android:id="@+id/loading_img"
+                android:layout_width="171dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/trace_loading" />
+
+            <ListView
+                android:id="@+id/tracelist"
+                style="@style/Widget.AppCompat.ListView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="#B0B0B0"
+                android:dividerHeight="1dp"
+                android:footerDividersEnabled="true"></ListView>
 
 
-        </ListView>
-    </FrameLayout>
+        </FrameLayout>
+
+    </RelativeLayout>
 
 </LinearLayout>

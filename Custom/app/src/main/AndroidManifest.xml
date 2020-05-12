@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.custom">
+    package="com.simonkim.custom">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -11,9 +11,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service
+            android:name="com.simonkim.custom.MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.simonkim.custom.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/noTitleAppTheme">
             <intent-filter>
@@ -23,18 +30,25 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".TraceActivity"
+            android:name="com.simonkim.custom.TraceActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".DetailActivity"
+            android:name="com.simonkim.custom.DetailActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".AddtraceActivity"
+            android:name="com.simonkim.custom.AddtraceActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".FixtraceActivity"
+            android:name="com.simonkim.custom.FixtraceActivity"
             android:screenOrientation="portrait" />
 
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/default_notification_channel_id"/>
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-5366317787089139~6392288771"/>
     </application>
 
 </manifest>

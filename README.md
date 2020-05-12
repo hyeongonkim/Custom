@@ -1,14 +1,21 @@
-# MP-custom
+# Custom
 
-2019-2 Semester, Kookmin Univ. Computer Science, Mobile Programming, Project.
-해당 프로젝트는 2019년 2학기 국민대학교 소프트웨어학부 '모바일프로그래밍'의 조별 프로젝트로 제작되었습니다.
+Android application that query customs clearance information for overseas delivery.(Only for ROK)
 [해외직구 통관조회 앱 서비스]
 
-## 사전설정
-추후 작성 예정.
+## 프로젝트정보
 
 ```
-empty
+1. 이 프로젝트는 백엔드 파이썬 라이브러리 설치가 필요합니다.
+  - pip install -r requirments.txt
+
+2. 개발환경
+  - MacOS 10.15 Catalina
+  - Android Studio
+  - Base SDK 29, minimum 23
+
+3. DB
+  - Firebase
 ```
 
 

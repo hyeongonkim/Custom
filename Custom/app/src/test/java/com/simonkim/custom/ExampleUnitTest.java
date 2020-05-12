@@ -1,4 +1,4 @@
-package com.example.custom;
+package com.simonkim.custom;
 
 import org.junit.Test;
 

@@ -1,9 +1,12 @@
-package com.example.custom;
+package com.simonkim.custom;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,7 +27,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -47,6 +53,18 @@ public class FixtraceActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
 
+    String thisItem;
+
+    ArrayList<String> chkName;
+
+    public String getThisItem() {
+        return thisItem;
+    }
+
+    public void setThisItem(String thisItem) {
+        this.thisItem = thisItem;
+    }
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle("송장수정");
@@ -54,6 +72,7 @@ public class FixtraceActivity extends AppCompatActivity {
 
         product_name_input = (EditText) findViewById(R.id.product_name_input);
         trace_number_input = (EditText) findViewById(R.id.trace_number_input);
+        trace_number_input.setFilters(new InputFilter[]{filterTrace});
         save_btn = (Button) findViewById(R.id.save);
 
         mAuth = FirebaseAuth.getInstance();
@@ -62,9 +81,13 @@ public class FixtraceActivity extends AppCompatActivity {
         intent = getIntent();
         final String item = intent.getStringExtra("toFix");
 
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy", Locale.KOREA);
+        Date currentTime = new Date(System.currentTimeMillis());
+        String dTime = formatter.format(currentTime);
+
         arrayList = new ArrayList<>();
-        arrayList.add("2019");
-        arrayList.add("2018");
+        arrayList.add(dTime);
+        arrayList.add(Integer.toString(Integer.parseInt(dTime) - 1));
 
         arrayAdapter = new ArrayAdapter<>(getApplicationContext(),
                 android.R.layout.simple_spinner_dropdown_item,
@@ -91,8 +114,6 @@ public class FixtraceActivity extends AppCompatActivity {
         companyList.add("FedEx");
         companyList.add("로젠택배");
         companyList.add("천일택배");
-        companyList.add("경동택배");
-        companyList.add("대신택배");
 
         companyAdapter = new ArrayAdapter<>(getApplicationContext(),
                 android.R.layout.simple_spinner_dropdown_item,
@@ -122,20 +143,18 @@ public class FixtraceActivity extends AppCompatActivity {
                     companyList.add("대한통운");
                     companyList.add("한진택배");
                     companyList.add("DHL");
-                    companyList.add("경동택배");
                 } else if(trace_number_input.getText().toString().length() == 11) {
                     companyList.clear();
                     companyList.add("로젠택배");
                     companyList.add("천일택배");
-                    companyList.add("경동택배");
                 } else if(trace_number_input.getText().toString().length() == 12) {
                     companyList.clear();
+                    companyList.add("대한통운");
                     companyList.add("한진택배");
                     companyList.add("FedEx");
                 } else if(trace_number_input.getText().toString().length() == 13) {
                     companyList.clear();
                     companyList.add("우체국");
-                    companyList.add("대신택배");
                 } else {
                     companyList.clear();
                     companyList.add("우체국");
@@ -146,8 +165,6 @@ public class FixtraceActivity extends AppCompatActivity {
                     companyList.add("FedEx");
                     companyList.add("로젠택배");
                     companyList.add("천일택배");
-                    companyList.add("경동택배");
-                    companyList.add("대신택배");
                 }
                 trace_company.setAdapter(companyAdapter);
                 trace_company.setSelection(0);
@@ -171,6 +188,7 @@ public class FixtraceActivity extends AppCompatActivity {
                         String traceyear = dataSnapshot.child("traceYear").getValue(String.class);
                         String tracecompany = dataSnapshot.child("traceCompany").getValue(String.class);
                         product_name_input.setText(product_name);
+                        setThisItem(product_name);
                         trace_number_input.setText(trace_number);
                         trace_year.setSelection(arrayList.indexOf(traceyear));
                         trace_company.setSelection(companyList.indexOf(tracecompany));
@@ -182,6 +200,23 @@ public class FixtraceActivity extends AppCompatActivity {
                     }
                 });
 
+        chkName = new ArrayList<>();
+
+        mDatabase.child("users").child(cu).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot fileSnapshot : dataSnapshot.getChildren()) {
+                    if(!fileSnapshot.child("productName").getValue(String.class).equals(getThisItem()))
+                        chkName.add(fileSnapshot.child("productName").getValue(String.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w("TAG: ", "Failed to read value", databaseError.toException());
+            }
+        });
+
         save_btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 final String p_name = product_name_input.getText().toString();
@@ -190,20 +225,38 @@ public class FixtraceActivity extends AppCompatActivity {
                 String t_company = trace_company.getSelectedItem().toString();
                 Map n_time = ServerValue.TIMESTAMP;
                 final AddTraceClass forSave = new AddTraceClass(p_name, t_number, t_year, t_company, n_time);
-                mDatabase.child("users").child(cu).child(item).removeValue().addOnSuccessListener(
-                        new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                mDatabase.child("users").child(cu).child(p_name).setValue(forSave);
-                                Toast.makeText(getApplicationContext(), "수정되었습니다", Toast.LENGTH_SHORT).show();
+
+                if(chkName.contains(p_name)) {
+                    Toast.makeText(FixtraceActivity.this, "이미 입력한 상품명입니다", Toast.LENGTH_SHORT).show();
+                } else if(p_name.length() == 0 || t_number.length() == 0) {
+                    Toast.makeText(FixtraceActivity.this, "모든 항목을 입력해주세요", Toast.LENGTH_SHORT).show();
+                } else {
+                    mDatabase.child("users").child(cu).child(item).removeValue().addOnSuccessListener(
+                            new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    mDatabase.child("users").child(cu).child(p_name).setValue(forSave);
+                                    Toast.makeText(getApplicationContext(), "수정되었습니다", Toast.LENGTH_SHORT).show();
+                                }
                             }
-                        }
-                );
-                intent = new Intent(getApplicationContext(), DetailActivity.class);
-                intent.putExtra("toDetail", p_name);
-                startActivity(intent);
-                finish();
+                    );
+                    intent = new Intent(getApplicationContext(), DetailActivity.class);
+                    intent.putExtra("toDetail", p_name);
+                    startActivity(intent);
+                    finish();
+                }
             }
         });
     }
+
+    protected InputFilter filterTrace = new InputFilter() {
+        @Override
+        public CharSequence filter(CharSequence charSequence, int i, int i1, Spanned spanned, int i2, int i3) {
+            Pattern ps = Pattern.compile("^[A-Z0-9]+$");
+            if(!ps.matcher(charSequence).matches()) {
+                return "";
+            }
+            return null;
+        }
+    };
 }

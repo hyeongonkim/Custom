@@ -1,4 +1,4 @@
-package com.example.custom;
+package com.simonkim.custom;
 
 import android.content.Context;
 import android.util.Log;
@@ -10,12 +10,12 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class ListAdapter extends BaseAdapter {
+public class CustomListAdapter extends BaseAdapter {
     LayoutInflater inflater = null;
-    private ArrayList<TraceListItemClass> m_oData = null;
+    private ArrayList<CustomListItemClass> m_oData = null;
     private int nListCnt = 0;
 
-    public ListAdapter(ArrayList<TraceListItemClass> _oData)
+    public CustomListAdapter(ArrayList<CustomListItemClass> _oData)
     {
         m_oData = _oData;
         nListCnt = m_oData.size();
@@ -50,18 +50,17 @@ public class ListAdapter extends BaseAdapter {
             {
                 inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             }
-            convertView = inflater.inflate(R.layout.listview_trace, parent, false);
+            convertView = inflater.inflate(R.layout.listview_custom, parent, false);
         }
 
-        TextView list_trace_company = (TextView) convertView.findViewById(R.id.list_trace_company);
-        TextView list_product_name = (TextView) convertView.findViewById(R.id.list_product_name);
-        TextView list_trace_number = (TextView) convertView.findViewById(R.id.list_trace_number);
-        TextView list_now_status = (TextView) convertView.findViewById(R.id.list_now_status);
+        TextView list_time = (TextView) convertView.findViewById(R.id.status_time);
+        TextView list_message = (TextView) convertView.findViewById(R.id.status_message);
+        TextView list_location = (TextView) convertView.findViewById(R.id.status_location);
 
-        list_trace_company.setText(m_oData.get(position).trace_company);
-        list_product_name.setText(m_oData.get(position).product_name);
-        list_trace_number.setText(m_oData.get(position).trace_number);
-        list_now_status.setText(m_oData.get(position).now_status);
+        list_time.setText(m_oData.get(position).statusTime);
+        list_message.setText(m_oData.get(position).statusMessage);
+        list_location.setText(m_oData.get(position).statusLocation);
+
         return convertView;
     }
 }

@@ -1,4 +1,4 @@
-package com.example.custom;
+package com.simonkim.custom;
 
 public class TraceListItemClass {
     public String product_name;

@@ -1,4 +1,4 @@
-package com.example.custom;
+package com.simonkim.custom;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,10 +16,18 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -27,6 +35,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import java.util.ArrayList;
 
@@ -43,23 +53,55 @@ public class TraceActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
 
+    String device_token;
+    String cu;
+
+    private AdView mAdView;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setTitle("배송목록");
         setContentView(R.layout.activity_trace);
 
+        MobileAds.initialize(this, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+            }
+        });
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
-        final String cu = currentUser.getUid();
+        cu = currentUser.getUid();
 
         listView = (ListView) findViewById(R.id.tracelist);
         empty_img = (ImageView) findViewById(R.id.empty_img);
         loading_img = (ImageView) findViewById(R.id.loading_img);
         loading_img.setVisibility(View.VISIBLE);
 
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w("TAG", "getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        final String token = task.getResult().getToken();
+
+                        mDatabase.child("devices").child(cu).child(token).setValue(" ");
+                        device_token = token;
+                    }
+                });
+
         mDatabase.child("users").child(cu).orderByChild("nowTime").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                int cntFinish = 0;
                 loading_img.setVisibility(View.INVISIBLE);
                 traceList = new ArrayList<>();
                 for (DataSnapshot fileSnapshot : dataSnapshot.getChildren()) {
@@ -68,7 +110,15 @@ public class TraceActivity extends AppCompatActivity {
                     temp.trace_company = fileSnapshot.child("traceCompany").getValue(String.class);
                     temp.trace_number = fileSnapshot.child("traceNumber").getValue(String.class);
                     temp.now_status = fileSnapshot.child("nowStatus").getValue(String.class);
-                    traceList.add(0, temp);
+                    if(temp.now_status.equals("배달완료")) {
+                        if(cntFinish == 0)
+                            traceList.add(temp);
+                        else
+                            traceList.add(traceList.size() - cntFinish, temp);
+                        cntFinish++;
+                    } else {
+                        traceList.add(0, temp);
+                    }
                 }
                 if(!traceList.isEmpty()) {
                     empty_img.setVisibility(View.INVISIBLE);
@@ -143,7 +193,7 @@ public class TraceActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_setting:
-                final String PREFERENCE = "com.studio572.samplesharepreference";
+                final String PREFERENCE = "com.simonkim.custom";
                 final SharedPreferences pref = getSharedPreferences(PREFERENCE, MODE_PRIVATE);
 
                 final EditText edittext = new EditText(this);
@@ -184,8 +234,19 @@ public class TraceActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int id)
                     {
                         FirebaseAuth.getInstance().signOut();
+                        SharedPreferences.Editor editor = pref.edit();
+                        edittext.setText("");
+                        editor.putString("personalCode", edittext.getText().toString());
+                        editor.commit();
+                        mDatabase.child("devices").child(cu).child(device_token).removeValue().addOnSuccessListener(
+                                new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                    }
+                                }
+                        );
                         Toast.makeText(getApplicationContext(), "로그아웃 되었습니다", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(getApplicationContext(),
+                        Intent intent = new Intent(TraceActivity.this,
                                 MainActivity.class);
                         startActivity(intent);
                         finish();

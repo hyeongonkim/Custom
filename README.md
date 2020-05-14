@@ -7,7 +7,7 @@ Android application that query customs clearance information for overseas delive
 
 ```
 1. 이 프로젝트는 백엔드 파이썬 라이브러리 설치가 필요합니다.
-  - pip install -r requirments.txt
+  - pip install -r requirements.txt
 
 2. 개발환경
   - MacOS 10.15 Catalina

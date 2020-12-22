@@ -68,29 +68,67 @@ def getDevicesFCM(cu):
     return list
 
 
+error_cnt = 0
+error_treated_cnt = 0
+total_delivery = 0
+completed_delivery = 0
 for key, val in snapshot.items():
-    if(str(type(val)) == "<class 'list'>"):
-        continue
-    for nkey, nval in val.items():
-        prevStatus = nval.get('nowStatus')
-        if(prevStatus == "배달완료"):
-            continue
-        nowStatus = prevStatus
-        traceCompany = nval.get('traceCompany')
-        if(traceCompany != 'EMS'):
-            newData, newStatus = parseUnipass(nval.get('traceNumber'), nval.get('traceYear'), prevStatus)
-        else:
-            newData, newStatus = parseEMS(nval.get('traceNumber'), prevStatus)
-        if(prevStatus != newStatus):
-            ref.child(key).child(nkey).child("customStatus").set(newData)
-            ref.child(key).child(nkey).update({
-                        'nowTime': {'.sv': 'timestamp'},
-                        'nowStatus': newStatus
-                    })
+    if None in val:
+        val.remove(None)
+        val = {i['productName']:i for i in val}
+        error_treated_cnt += 1
+        print("숫자로 된 상품명을 전처리해 오류를 제거했습니다.")
+    package_name_list = [k for k, v in val.items()]
+    for curr_name in package_name_list:
+        if '?' in curr_name:
+            nval = {}
+            for nk, nv in val.items():
+                if '?' in nk:
+                    nv.update({'productName': nk.replace('?', '!')})
+                    nval.update({nk.replace('?', '!'): nv})
+                else:
+                    nval.update({nk: nv})
+            ref.child(key).delete()
+            ref.child(key).set(nval)
+            val = nval
+            error_treated_cnt += 1
+            print("물음표가 포함된 상품명을 전처리해 오류를 제거했습니다.")
+            break
+    try:
+        for nkey, nval in val.items():
+            total_delivery += 1
+            prevStatus = nval.get('nowStatus')
+            if(prevStatus == "배달완료"):
+                completed_delivery += 1
+                continue
+            nowStatus = prevStatus
+            traceCompany = nval.get('traceCompany')
+            if(traceCompany != 'EMS'):
+                newData, newStatus = parseUnipass(nval.get('traceNumber'), nval.get('traceYear'), prevStatus)
+            else:
+                newData, newStatus = parseEMS(nval.get('traceNumber'), prevStatus)
+            if(prevStatus != newStatus):
+                ref.child(key).child(nkey).child("customStatus").set(newData)
+                ref.child(key).child(nkey).update({
+                            'nowTime': {'.sv': 'timestamp'},
+                            'nowStatus': newStatus
+                        })
 
-            registration_id = getDevicesFCM(key)
-            message_title = nkey + " 통관상태 업데이트"
-            message_body = newStatus
-            result = push_service.notify_multiple_devices(registration_ids=registration_id, message_title=message_title, message_body=message_body)
-        else:
-            continue
+                registration_id = getDevicesFCM(key)
+                message_title = nkey + " 통관상태 업데이트"
+                message_body = newStatus
+                result = push_service.notify_multiple_devices(registration_ids=registration_id, message_title=message_title, message_body=message_body)
+            else:
+                continue
+    except ValueError:
+        error_cnt += 1
+        print("Value 에러 발생, 문제 유저 Uid: " + key)
+    except AttributeError:
+        error_cnt += 1
+        print("Attribute 에러 발생, 문제 유저 Uid: " + key)
+print("\n- - - - - - - - - - - - - - - - - - - - - - - - - -\n")
+print(str(len(snapshot.items())) + "명의 유저가 사용 중입니다.")
+print(str(total_delivery) + "개 아이템을 처리하였습니다.")
+print(str(completed_delivery) + "개 아이템이 배달완료로 처리되어 있습니다.")
+print(str(error_cnt) + "개 아이템에서 오류가 발생했습니다.")
+print(str(error_treated_cnt) + "개 아이템의 오류를 사전에 감지하고 해결했습니다.")
